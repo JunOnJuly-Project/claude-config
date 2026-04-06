@@ -129,6 +129,11 @@ claude
 │   ├── scripts/env-check.js
 │   ├── .githooks/pre-commit
 │   └── .github/workflows/ci.yml
+├── tests/
+│   └── bootstrap-matrix/           # /bootstrap 분기 회귀 테스트 (14 케이스)
+│       ├── run.sh
+│       ├── lib.sh
+│       └── cases/case{1..14}-*/
 └── references/
     └── methodologies/              # 9개 방법론 참조 문서
         ├── README.md
@@ -143,6 +148,18 @@ claude
         └── microservice.md
 ```
 
+## 회귀 테스트 (`tests/`)
+
+`/bootstrap` 9단계의 정상/이상 분기를 자기충족 fixture 로 검증.
+
+```bash
+bash ~/.claude/tests/bootstrap-matrix/run.sh
+# 결과: PASS=14  FAIL=0
+```
+
+14개 케이스가 git/handoff/schema/branch/worktree/blocker/dirty/ignore 분기 전체를 커버.
+세부 매핑은 `tests/bootstrap-matrix/README.md` 참조.
+
 ## 변경 이력 주요 사항
 
 - **v2 (2026-04)**: 워크플로우 전면 재설계
@@ -152,6 +169,8 @@ claude
   - 기본 브랜치 전략 GitHub Flow 로 변경 (Git Flow 는 `--git-flow` 옵트인)
   - `templates/` 디렉터리 신설 (HANDOFF v2, CI, pre-commit, 환경 점검)
   - SessionStart hook 이 `/bootstrap` 자동 호출 지시
+  - `/bootstrap` step9 신규: 신규 파일 ignore 사전 검사 (MockStock `out/` 사일런트 무시 사고 재발 방지)
+  - `tests/bootstrap-matrix/` 14 케이스 회귀 매트릭스 신설
 
 ## 다른 PC 에서 사용
 
