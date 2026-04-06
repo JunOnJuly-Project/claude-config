@@ -1,0 +1,36 @@
+# 의존성
+node_modules/
+vendor/
+.venv/
+venv/
+__pycache__/
+*.pyc
+
+# 환경변수/시크릿
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+id_rsa*
+infra/secrets/
+
+# Claude Code 작업 아티팩트
+.claude/worktrees/
+.claude/local/
+
+# 빌드 산출물
+dist/
+build/
+target/
+out/
+.next/
+coverage/
+*.log
+
+# IDE
+.idea/
+.vscode/
+!.vscode/settings.json.example
+*.swp
+.DS_Store
