@@ -20,6 +20,12 @@ description: 세션 시작 시 프로젝트 정합성을 검증하는 게이트.
    - 없으면 `templates/.gitignore` 에서 추가하도록 권고
 7. **빌드 상태 표식**: `HANDOFF.md` 의 "🔴 블로커" 섹션 파싱. 있으면 내용 요약 + "먼저 해결하시겠습니까?" 질문.
 8. **git clean 확인**: dirty 면 이전 세션 미완료 변경 가능성 경고. `.gitignore` 로 걸러져야 할 파일(`.claude/worktrees/`, `node_modules/`, `.env`) 이 untracked 에 포함되면 `.gitignore` 보강 권고.
+9. **신규 파일 ignore 사전 검사** (신규, MockStock `out/` 패턴 사일런트 무시 사고 재발 방지):
+   - `git status --porcelain` 으로 untracked 파일 수집
+   - 워킹 트리의 신규 소스 파일(`*.java`, `*.ts`, `*.tsx`, `*.kt`, `*.py`) 을 `git check-ignore -v --no-index` 로 검사
+   - 무시되는 파일이 있으면 **즉시 차단**하고 어느 `.gitignore` 라인이 매치했는지 출력
+   - 특히 `out/`, `bin/`, `dist/`, `target/` 같은 비앵커 패턴이 도메인 경로(`**/port/out/`, `**/domain/bin/`) 와 충돌하는지 휴리스틱 경고
+   - 권고: 패턴을 `/backend/out/`, `/frontend/dist/` 처럼 루트 앵커로 변경
 
 ## 출력 형식
 ```
