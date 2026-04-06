@@ -1,0 +1,15 @@
+# API 키 및 계정 정보
+config.json
+
+# 세션 데이터
+projects/
+sessions/
+backups/
+ide/
+
+# 자동 생성 파일
+shell-snapshots/
+plugins/
+
+# 계획 파일 (세��별)
+plans/
