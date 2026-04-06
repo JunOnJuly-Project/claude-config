@@ -389,17 +389,21 @@ Planner의 아키텍처와 작업 분해를 검토하고:
 
 ---
 
-## Phase 1: Git 환경 설정
+## Phase 1: Git 환경 설정 (자동, 블로킹 금지)
 
-1. git 초기화 여부를 확인한다
-2. 미초기화 시: Git Flow 브랜치 전략 설정
-   - `git init` → main 브랜치
-   - `.gitignore` 생성 (프로젝트 유형별)
-   - `.github/` 이슈/PR 템플릿 생성
-   - develop 브랜치 생성
-3. 이미 초기화 시:
-   - develop 브랜치 존재 확인 → 없으면 생성
+**원칙**: 사용자에게 묻지 말고 자동으로 git을 준비한다. 저장소가 없으면 무조건 `git init` 부터 한다.
+
+1. `git rev-parse --is-inside-work-tree` 로 git 저장소 여부 확인
+2. **미초기화 시 (자동 수행)**:
+   - `git init -b main`
+   - 프로젝트 유형에 맞는 `.gitignore` 생성
+   - `.github/ISSUE_TEMPLATE/`, `.github/pull_request_template.md` 생성
+   - `git add` 후 첫 커밋 (`chore(setup): 프로젝트 초기화`)
+   - `git checkout -b develop`
+3. **이미 초기화된 경우**:
+   - `develop` 브랜치 존재 확인 → 없으면 `git checkout -b develop` (기본 브랜치 기준)
    - develop 체크아웃
+4. 이 단계에서는 사용자 확인을 요구하지 않는다. 오류만 보고한다.
 
 ## Phase 2: 프로젝트 초기화
 
