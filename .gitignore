@@ -13,3 +13,4 @@ plugins/
 
 # 계획 파일 (세��별)
 plans/
+.credentials.json

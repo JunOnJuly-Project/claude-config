@@ -1,0 +1,19 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "HANDOFF.md v2 schema",
+  "description": "필수 섹션 헤딩 목록 — 마크다운 파서가 h2 레벨을 추출하여 매칭",
+  "version": "2.0",
+  "requiredSections": [
+    "1. 프로젝트 개요",
+    "2. 다른 PC에서 이어 받기",
+    "3. 현재 진행 상태",
+    "4. 방법론 강제 규칙",
+    "5. 재개 체크리스트",
+    "6. 참고 자료"
+  ],
+  "requiredSubsections": {
+    "2. 다른 PC에서 이어 받기": ["필수 도구", "클론", "실행", "동작 확인"],
+    "3. 현재 진행 상태": ["현재 브랜치", "완료", "블로커", "미완료"]
+  },
+  "metadataRequired": ["스키마 버전", "최종 업데이트"]
+}

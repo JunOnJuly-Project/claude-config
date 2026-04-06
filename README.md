@@ -1,207 +1,161 @@
 # Claude Code 글로벌 워크플로우 시스템
 
-프로젝트에 귀속되지 않는 전역 개발 워크플로우 시스템입니다. `~/.claude/`에 설치하면 모든 프로젝트에서 사용할 수 있습니다.
+프로젝트에 귀속되지 않는 전역 개발 워크플로우. `~/.claude/` 에 설치하면 모든 프로젝트에서 사용.
 
 ## 설치
 
 ```bash
-# ~/.claude/에 클론
 git clone https://github.com/JunOnJuly-Project/claude-config.git ~/.claude
-
-# 또는 기존 ~/.claude/가 있으면 필요한 파일만 복사
 ```
 
-> **주의**: `config.json`은 API 키가 포함되어 있으므로 `.gitignore`에 등록되어 있습니다. Claude Code가 첫 실행 시 자동 생성합니다.
+> `config.json` 은 Claude Code 가 자동 생성 (gitignore).
 
-## 핵심 개념
+## 설계 원칙
 
-### 글로벌 지침 (`CLAUDE.md`)
-항상 적용되는 기본 규칙:
-- 한국어 출력/주석/커밋 메시지 (기술 용어는 영어 유지)
-- 클린코드 (SOLID, DRY, KISS, 함수 20줄 이내, 매개변수 3개 이내)
-- Git Flow + 도메인 단위 브랜치 + 최소 구현 단위 커밋
-- 테스트 커버리지 기준 (단위 80%+, 통합 핵심경로 100%)
-- 코드 리뷰 심각도 마커: `[치명적]` `[중요]` `[제안]` `[칭찬]`
+1. **재개 가능성** — 모든 프로젝트는 다른 PC/세션에서 끊김 없이 이어받을 수 있어야 한다. `HANDOFF.md` (스키마 v2) 필수
+2. **부트스트랩 게이트** — 세션 시작 시 `/bootstrap` 으로 정합성 검증. 이상 발견 시 차단
+3. **에이전트 팀 우선** — L2/L3 도메인은 단일 에이전트 작성 금지. 역할 분리된 팀으로만
+4. **방법론은 참조, 스킬 아님** — TDD/DDD/Clean Arch 등 9개는 `references/methodologies/` 의 문서이며, `/develop --{플래그}` 로 호출
 
-### 에이전트 (`agents/`)
+## 스킬 (`skills/`) — 9개
+
+| 명령어 | 역할 |
+|---|---|
+| `/bootstrap` | 세션 정합성 게이트 (HANDOFF/브랜치/빌드/워크트리 검증) |
+| `/handoff` | HANDOFF.md 관리 (init / update / validate / migrate) |
+| `/project-init` | 새 프로젝트 초기화 (git init + 템플릿 복사 + GitHub 리포/Project) |
+| `/plan` | 계획 + 브레인스토밍 3라운드 (planner/developer/tester/reviewer 델파이) |
+| `/develop` | 에이전트 팀 개발 파이프라인 (11 단계) |
+| `/debug` | 체계적 디버깅 (debugger → developer → tester → reviewer) |
+| `/review` | 코드 리뷰 ([치명적]/[중요]/[제안]/[칭찬]) |
+| `/doc` | 문서 생성 (README/API/ADR/CHANGELOG/HANDOFF) |
+
+## 에이전트 (`agents/`) — 6개
 
 | 에이전트 | 모델 | 역할 |
-|----------|------|------|
-| planner | Opus | 아키텍처 설계, 작업 분해, 브레인스토밍 통합 |
+|---|---|---|
+| planner | Opus | 아키텍처, 작업 분해, 브레인스토밍 |
 | developer | Sonnet | 핵심 개발, 클린코드 구현 |
-| reviewer | Opus | 코드 리뷰 (읽기전용, 심각도 마커) |
-| tester | Sonnet | 테스트 생성, 커버리지 확인 |
-| documenter | Sonnet | README, API 문서, ADR, CHANGELOG |
-| debugger | Opus | 체계적 7단계 버그 분석 |
+| tester | Sonnet | 테스트 생성, 커버리지 |
+| reviewer | Opus | 코드 리뷰 (읽기 전용) |
+| documenter | Sonnet | README/API/ADR/CHANGELOG |
+| debugger | Opus | 7단계 근본 원인 분석 |
 
-planner, developer, reviewer, tester는 브레인스토밍 모드(라운드 1~3)를 지원합니다.
+## 템플릿 (`templates/`)
 
-## 워크플로우 스킬 (`skills/`)
+프로젝트 초기화 시 복사되는 파일들:
 
-| 명령어 | 설명 |
-|--------|------|
-| `/start` | **총괄 오케스트레이터** — 정보 수집 → 브레인스토밍 → git-init → project-init → develop |
-| `/develop` | 전체 개발 사이클 (계획→문서→테스트→구현→리뷰→커밋) |
-| `/plan` | 프로젝트 계획 및 작업 분해 |
-| `/doc` | 문서 생성 (README, API, ADR, CHANGELOG) |
-| `/review` | 클린코드 기반 코드 리뷰 |
-| `/test` | 테스트 생성 및 실행 |
-| `/git-init` | Git Flow 초기 설정 |
-| `/project-init` | GitHub Project 보드 + 이슈 초기화 |
-| `/debug` | 체계적 디버깅 |
-| `/refactor` | 코드 리팩토링 |
+- `HANDOFF.md` — 스키마 v2 (1~6 섹션 표준)
+- `handoff.schema.json` — 스키마 검증용
+- `CLAUDE.project.md` — 프로젝트 로컬 지침 (도메인 레벨 L1-L3)
+- `.gitattributes` — LF 강제 (gradlew/Alpine 호환)
+- `.env.example` — 환경변수 템플릿 (포트 18080 기본, Windows Hyper-V 회피)
+- `scripts/env-check.js` — 크로스 플랫폼 환경 점검
+- `.githooks/pre-commit` — 시크릿/빌드 산출물 커밋 차단
+- `.github/workflows/ci.yml` — HANDOFF 검증 포함 CI
 
-## 방법론 스킬 (선택적, 조합 가능)
+## 방법론 참조 (`references/methodologies/`)
 
-| 명령어 | 방법론 |
-|--------|--------|
-| `/tdd` | Test-Driven Development |
-| `/ddd` | Domain-Driven Design |
-| `/clean-arch` | Clean Architecture |
-| `/hexagonal` | Hexagonal Architecture |
-| `/event-driven` | Event-Driven Architecture |
-| `/cqrs` | CQRS |
-| `/bdd` | Behavior-Driven Development |
-| `/fp` | Functional Programming |
-| `/microservice` | Microservice 패턴 |
+스킬이 **아님**. `/develop --{플래그}` 로 호출.
 
-### 조합 규칙
-- **상호보완** (권장): `--tdd + --ddd`, `--tdd + --clean-arch`, `--event-driven + --cqrs`
-- **중복**: `--tdd + --bdd` → BDD 시나리오를 TDD Red 단계로 사용
-- **독립**: `--fp + --tdd`, `--microservice + --event-driven`
-- 모든 조합이 허용되며, 상충 시 두 방법론의 장점을 통합 적용
+| 플래그 | 파일 |
+|---|---|
+| `--tdd` | tdd.md |
+| `--ddd` | ddd.md |
+| `--clean-arch` | clean-arch.md |
+| `--hexagonal` | hexagonal.md |
+| `--bdd` | bdd.md |
+| `--event-driven` | event-driven.md |
+| `--cqrs` | cqrs.md |
+| `--fp` | fp.md |
+| `--microservice` | microservice.md |
 
-## `/start` 플로우
+조합 가능: `--tdd --clean-arch`, `--ddd --event-driven --cqrs` 등.
 
+## 표준 워크플로우
+
+### 새 프로젝트
 ```
-Phase -1: 정보 수집 (인터뷰)
-├─ 사용자 입력 파싱 (방법론 플래그 + 프로젝트 설명)
-├─ 정보 충분성 판단 (필수: 목적, 사용자, 핵심 기능)
-├─ 기능 제안 (일반/추천/유니크 3카테고리)
-├─ 애매한 답변 시 재질문 (최대 3회, 선택지 제시)
-├─ 프로젝트 정의서 생성
-└─ 사용자 승인
-
-Phase 0: 브레인스토밍 (3라운드 델파이)
-├─ 라운드 1: 4개 에이전트 병렬 관점 수집
-│  ├─ Planner: 아키텍처 초안, 도메인 분석
-│  ├─ Developer: 기술 스택 실현 가능성
-│  ├─ Reviewer: 위험 요소, 보안 분석
-│  └─ Tester: 테스팅 전략 수립
-├─ 라운드 2: 교차 검토 및 상호 피드백
-├─ 라운드 3: Planner 최종 통합 + 나머지 검증
-└─ 사용자 승인 (승인/수정/거부)
-
-Phase 1: Git 환경 설정 (Git Flow 브랜치 전략)
-Phase 2: 프로젝트 초기화 (GitHub Project 보드 + 도메인별 이슈)
-Phase 3: 도메인별 /develop 자동 실행
-Phase 4: 최종 보고
+/project-init 전자상거래
+→ /plan --brainstorm 전자상거래 MVP
+→ /develop --tdd --ddd order 주문 생성
 ```
 
-## 사용법
-
-```bash
-# 새 프로젝트 시작 (전체 플로우: 인터뷰 → 브레인스토밍 → 개발)
-/start --tdd --ddd 전자상거래 플랫폼
-
-# 방법론 조합
-/start --tdd --clean-arch REST API 서버
-
-# 방법론 없이
-/start 간단한 CLI 도구
-
-# 개별 스킬 사용
-/develop --tdd 로그인 기능
-/review
-/debug 에러 메시지
-/test 유저 서비스
-/ddd 프로젝트 분석
+### 기존 프로젝트 이어받기
+```
+# 새 PC
+git clone {repo}
+cd {repo}
+claude
+# 세션 시작 → /bootstrap 자동 호출 → HANDOFF 확인 → 다음 작업
 ```
 
-## 깃 컨벤션
-
-### 브랜치 전략
+### 일상 개발
 ```
-main                              # 프로덕션
-├── develop                       # 통합 개발
-│   ├── feature/{도메인}/{기능}    # 기능 개발
-│   ├── bugfix/{도메인}/{설명}     # 버그 수정
-│   └── refactor/{도메인}/{설명}   # 리팩토링
-├── release/v{x}.{y}.{z}         # 릴리스
-└── hotfix/{설명}                  # 긴급 수정
-```
-
-### 커밋 형식
-```
-{type}({도메인}): {한국어 설명}
-
-{변경 이유}
-
-Refs #{이슈번호}
-```
-
-- 하나의 커밋 = 하나의 논리적 변경
-- 커밋 순서: 인터페이스 정의 → 테스트 → 구현 → 리팩토링
-
-### 이슈-브랜치-커밋 연결
-```
-이슈 #12: [auth] 로그인 기능
-  ├─ 브랜치: feature/auth/login
-  ├─ 커밋: feat(auth): 인터페이스 정의 (Refs #12)
-  ├─ 커밋: test(auth): 테스트 추가 (Refs #12)
-  ├─ 커밋: feat(auth): 구현 (Refs #12)
-  └─ PR 머지 → Closes #12 → 이슈 자동 닫힘
-```
-
-## 설정 (`settings.json`)
-
-- **Agent Teams**: `CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1` 활성화
-- **SessionStart 훅**: 한국어 모드 + 컨벤션 준수 프라이밍
-- **PreToolUse 훅**: Write/Edit 시 클린코드 확인 리마인더
-- **권한**: git, gh, npm, python, docker 등 일반 명령 사전 허용
-
-## 다른 PC에서 사용
-
-```bash
-# 1. ~/.claude/에 클론
-git clone https://github.com/JunOnJuly-Project/claude-config.git ~/.claude
-
-# 2. Claude Code 실행 — config.json은 자동 생성됨
-# 3. gh auth login — GitHub CLI 인증 (project-init 사용 시 필요)
+/develop --tdd auth JWT 리프레시
+/debug 로그인 500 에러
+/review --strict
 ```
 
 ## 파일 구조
 
 ```
 ~/.claude/
-├── CLAUDE.md                    # 글로벌 지침
-├── settings.json                # 훅, 권한, 환경변수
-├── README.md                    # 이 파일
-├── agents/
-│   ├── planner.md               # 계획/설계 (Opus)
-│   ├── developer.md             # 핵심 개발 (Sonnet)
-│   ├── reviewer.md              # 코드 리뷰 (Opus, 읽기전용)
-│   ├── tester.md                # 테스트 (Sonnet)
-│   ├── documenter.md            # 문서화 (Sonnet)
-│   └── debugger.md              # 디버깅 (Opus)
-└── skills/
-    ├── start/SKILL.md           # /start 오케스트레이터
-    ├── develop/SKILL.md         # /develop 개발 워크플로우
-    ├── plan/SKILL.md            # /plan 계획
-    ├── doc/SKILL.md             # /doc 문서 생성
-    ├── review/SKILL.md          # /review 코드 리뷰
-    ├── test/SKILL.md            # /test 테스트
-    ├── git-init/SKILL.md        # /git-init Git Flow
-    ├── project-init/SKILL.md    # /project-init GitHub Project
-    ├── debug/SKILL.md           # /debug 디버깅
-    ├── refactor/SKILL.md        # /refactor 리팩토링
-    ├── tdd/SKILL.md             # /tdd
-    ├── ddd/SKILL.md             # /ddd
-    ├── clean-arch/SKILL.md      # /clean-arch
-    ├── hexagonal/SKILL.md       # /hexagonal
-    ├── event-driven/SKILL.md    # /event-driven
-    ├── cqrs/SKILL.md            # /cqrs
-    ├── bdd/SKILL.md             # /bdd
-    ├── fp/SKILL.md              # /fp
-    └── microservice/SKILL.md    # /microservice
+├── CLAUDE.md                       # 글로벌 지침
+├── settings.json                   # 훅, 권한, SessionStart 가 /bootstrap 호출
+├── README.md                       # 이 파일
+├── agents/                         # 6개 페르소나 에이전트
+│   ├── planner.md
+│   ├── developer.md
+│   ├── tester.md
+│   ├── reviewer.md
+│   ├── documenter.md
+│   └── debugger.md
+├── skills/                         # 9개 워크플로우 스킬
+│   ├── bootstrap/SKILL.md
+│   ├── handoff/SKILL.md
+│   ├── project-init/SKILL.md
+│   ├── plan/SKILL.md
+│   ├── develop/SKILL.md
+│   ├── debug/SKILL.md
+│   ├── review/SKILL.md
+│   └── doc/SKILL.md
+├── templates/                      # 프로젝트 초기화용 파일
+│   ├── HANDOFF.md
+│   ├── handoff.schema.json
+│   ├── CLAUDE.project.md
+│   ├── .gitattributes
+│   ├── .env.example
+│   ├── scripts/env-check.js
+│   ├── .githooks/pre-commit
+│   └── .github/workflows/ci.yml
+└── references/
+    └── methodologies/              # 9개 방법론 참조 문서
+        ├── README.md
+        ├── tdd.md
+        ├── ddd.md
+        ├── clean-arch.md
+        ├── hexagonal.md
+        ├── bdd.md
+        ├── event-driven.md
+        ├── cqrs.md
+        ├── fp.md
+        └── microservice.md
+```
+
+## 변경 이력 주요 사항
+
+- **v2 (2026-04)**: 워크플로우 전면 재설계
+  - 스킬 20개 → 9개 축소 (방법론 9개를 `references/` 로 이관, `start`/`test`/`refactor`/`git-init` 삭제)
+  - `/bootstrap`, `/handoff` 신설 (정합성 게이트 + 핸드오프 관리)
+  - `/develop` 을 실제 에이전트 팀 파이프라인으로 재작성
+  - 기본 브랜치 전략 GitHub Flow 로 변경 (Git Flow 는 `--git-flow` 옵트인)
+  - `templates/` 디렉터리 신설 (HANDOFF v2, CI, pre-commit, 환경 점검)
+  - SessionStart hook 이 `/bootstrap` 자동 호출 지시
+
+## 다른 PC 에서 사용
+
+```bash
+git clone https://github.com/JunOnJuly-Project/claude-config.git ~/.claude
+gh auth login   # project-init 사용 시 필요
 ```

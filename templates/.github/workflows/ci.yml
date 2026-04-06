@@ -1,0 +1,17 @@
+name: CI
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main, develop]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: HANDOFF 검증
+        run: |
+          test -f HANDOFF.md || (echo "HANDOFF.md 누락" && exit 1)
+          grep -q "스키마 버전: v2" HANDOFF.md || (echo "HANDOFF v2 스키마 아님" && exit 1)
+      # 언어별 빌드 단계는 프로젝트에서 추가

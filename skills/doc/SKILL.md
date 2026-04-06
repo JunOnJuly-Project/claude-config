@@ -1,53 +1,24 @@
 ---
 name: doc
-description: 문서 생성 및 업데이트. README, API 문서, 아키텍처 문서, CHANGELOG, ADR 등을 생성하거나 업데이트할 때 사용하세요.
+description: 문서 생성 및 업데이트. README, API 문서, 아키텍처 문서, CHANGELOG, ADR, HANDOFF 갱신 시 사용. documenter 에이전트를 호출한다.
 ---
 
-# 문서 생성
+# /doc — 문서 생성/갱신
 
-프로젝트 문서를 생성하거나 업데이트합니다. 모든 문서는 한국어로 작성합니다.
+## 호출 형식
+```
+/doc [readme|api|adr|changelog|handoff|all] {추가 설명}
+```
 
-## 입력
-`$ARGUMENTS` — 문서 유형 및 대상. 예: `readme`, `api`, `adr 인증 방식 결정`, `changelog`, `architecture`
+## 파이프라인
+1. **documenter** 에이전트 호출 (한국어, 독스트링 포함)
+2. 대상별 템플릿:
+   - `readme` — 프로젝트 설명, 설치, 사용법, 아키텍처
+   - `api` — 엔드포인트, 파라미터, 응답 예시
+   - `adr` — `docs/adr/NNNN-{제목}.md` (날짜/상태/컨텍스트/결정/결과)
+   - `changelog` — Keep a Changelog 형식
+   - `handoff` — `/handoff update` 로 위임
+3. 커밋: `docs({domain}): {한국어}`
 
-## 문서 유형별 처리
-
-### readme (기본)
-1. 프로젝트 구조 분석 (package.json, 소스 코드, 설정 파일)
-2. README.md 생성/업데이트:
-   - 프로젝트명, 설명, 사전 요구사항, 설치, 사용법
-   - 아키텍처 개요, 디렉토리 구조
-   - 개발 가이드, 테스트 실행 방법
-   - 브랜치 전략, 커밋 규칙, 기여 방법
-
-### api
-1. 소스 코드에서 API 엔드포인트 추출 (라우터, 컨트롤러 분석)
-2. `docs/api/` 또는 README에 API 문서 작성:
-   - 엔드포인트 목록, HTTP 메서드, URL
-   - 요청 파라미터, 헤더, 바디
-   - 응답 형식, 상태 코드
-   - 에러 코드 및 설명
-
-### adr
-1. `$ARGUMENTS`에서 결정 주제 추출
-2. `docs/adr/` 디렉토리에 ADR 문서 생성:
-   - ADR-{번호}: {제목}
-   - 날짜, 상태, 컨텍스트, 결정, 결과
-
-### changelog
-1. git log 분석하여 변경사항 파악
-2. CHANGELOG.md 생성/업데이트 (Keep a Changelog 형식):
-   - 추가, 변경, 수정, 제거 카테고리
-   - 시맨틱 버저닝
-
-### architecture
-1. 프로젝트 코드 전체 분석
-2. `docs/architecture.md` 생성:
-   - 시스템 개요, 컴포넌트 다이어그램 (텍스트)
-   - 레이어 구조, 데이터 흐름
-   - 외부 의존성, 기술 스택
-
-## 출력
-- 모든 문서 **한국어** 작성
-- 생성/수정된 파일 경로 보고
-- 커밋: `docs({도메인}): {문서 설명}`
+## 트리거
+`/develop` 의 단계 2, 9 에서 자동 호출.
