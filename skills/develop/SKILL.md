@@ -37,6 +37,7 @@ description: 전체 개발 워크플로우. 에이전트 팀을 순차 호출하
 | 9 | documenter | README/CHANGELOG/HANDOFF 갱신 | - |
 | 10 | (main) | 논리 단위 커밋 | - |
 | 11 | (main) | 원격 푸시 | 원격 없음 |
+| 12 | (main) | 워크트리 정리: 작업이 `claude/*` 또는 `.claude/worktrees/*` 에서 진행됐다면 머지 후 `git worktree remove` + `git branch -D` + `git worktree prune` | 메인 워크트리에서 작업 시 |
 
 ## 방법론 플래그 처리
 각 플래그는 `references/methodologies/{플래그}.md` 를 읽어 해당 단계 지시사항을 보강:

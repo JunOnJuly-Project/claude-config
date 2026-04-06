@@ -14,8 +14,12 @@ description: 세션 시작 시 프로젝트 정합성을 검증하는 게이트.
 3. **HANDOFF 스키마 검증**: `templates/handoff.schema.json` 과 대조 (필수 섹션: 개요/실행/진행상태/블로커/재개체크리스트).
 4. **브랜치 정렬 확인**: HANDOFF 의 "현재 브랜치" 와 `git branch --show-current` 가 일치하는지. 불일치 시 선택지 제시.
 5. **워크트리 일치**: `git worktree list` 에 HEAD 가 기록된 브랜치와 일치하는지. Claude 자동 워크트리(`claude/*`) 가 main 기반이면 경고.
-6. **빌드 상태 표식**: `HANDOFF.md` 의 "🔴 블로커" 섹션 파싱. 있으면 내용 요약 + "먼저 해결하시겠습니까?" 질문.
-7. **git clean 확인**: dirty 면 이전 세션 미완료 변경 가능성 경고.
+6. **워크트리 잔재 감지** (신규):
+   - `.claude/worktrees/` 디렉터리가 존재하는데 `git worktree list` 에 등록되지 않은 경로가 있으면 **stale 잔재**로 판정
+   - `git worktree prune` 제안 + `.gitignore` 에 `.claude/worktrees/` 등록 여부 확인
+   - 없으면 `templates/.gitignore` 에서 추가하도록 권고
+7. **빌드 상태 표식**: `HANDOFF.md` 의 "🔴 블로커" 섹션 파싱. 있으면 내용 요약 + "먼저 해결하시겠습니까?" 질문.
+8. **git clean 확인**: dirty 면 이전 세션 미완료 변경 가능성 경고. `.gitignore` 로 걸러져야 할 파일(`.claude/worktrees/`, `node_modules/`, `.env`) 이 untracked 에 포함되면 `.gitignore` 보강 권고.
 
 ## 출력 형식
 ```

@@ -13,6 +13,8 @@ description: HANDOFF.md 를 관리한다. 서브커맨드 init/update/validate/m
 ### `/handoff update {섹션}`
 특정 섹션만 갱신. 섹션: `progress`, `blocker`, `next`, `branch`.
 
+**커밋 해시 자동 채우기** (신규): `progress` 갱신 시 "완료" 표의 "커밋" 열이 비어 있거나 `—` 이면 `git log --oneline -n 20` 으로 최근 커밋을 조회하여 작업 설명과 키워드 매칭하여 해시(7자) 를 자동 채운다. 매칭 실패 시 사용자에게 해시 목록 제시 후 선택.
+
 ### `/handoff validate`
 `templates/handoff.schema.json` 과 대조하여 누락/오류 보고. 필수 섹션:
 - 1. 프로젝트 개요
