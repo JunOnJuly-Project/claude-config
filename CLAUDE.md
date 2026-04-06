@@ -121,6 +121,18 @@ Refs #{이슈번호}
 - 논리적 단위마다 한국어 Conventional Commits 로 자동 커밋한다 (사용자가 명시적으로 금지한 경우 제외)
 - 이슈 번호는 계획서의 이슈 번호를 자동으로 `Refs #n` 으로 연결한다
 
+### 프로젝트 재개 가능성 (필수)
+- **모든 프로젝트는 다른 PC / 다른 세션에서 이어 받아도 완벽히 따라갈 수 있어야 한다.** 이것은 선택이 아니라 필수 조건이다
+- 다음 항목은 항상 리포에 포함되어야 한다:
+  - `README.md` 상단에서 `HANDOFF.md` 로 링크
+  - `HANDOFF.md` — 프로젝트 개요, 필수 도구/버전, 클론→시크릿→실행 절차, 현재 진행 상태(완료/미완료/알려진 이슈), 다음 작업 우선순위, 방법론 강제 규칙, 재개 체크리스트
+  - `docs/plans/{프로젝트명}-plan.md` — 최종 계획서
+  - 실제로 동작에 필요한 파일 전부 (예: Gradle/Maven wrapper, package lock, Dockerfile, docker-compose)
+  - `.env.example` 등 시크릿 템플릿 (실제 시크릿은 gitignore)
+- 작업 진행 중 주요 마일스톤(feature 브랜치 병합 등)마다 `HANDOFF.md` 의 "현재 진행 상태" 섹션을 **갱신**하고 커밋한다
+- Phase/이슈 단위 완료 시 로컬 커밋에서 멈추지 말고 **원격 리포에 푸시**까지 수행한다. 원격 리포가 없다면 자동으로 생성한다 (gh CLI 또는 GitHub API 사용, `git credential fill` 로 토큰 취득 가능)
+- 새 세션에서 이어 받을 때는 **반드시 `HANDOFF.md` 와 `docs/plans/` 를 먼저 읽는다**
+
 ### 글로벌 설정 자동 푸시
 - `~/.claude/` 하위 파일(CLAUDE.md, skills, agents, settings 등)이 변경되면 **자동으로 커밋하고 원격에 push** 한다
 - 커밋 메시지 타입은 `chore(global)`, 본문은 변경 내역 요약
