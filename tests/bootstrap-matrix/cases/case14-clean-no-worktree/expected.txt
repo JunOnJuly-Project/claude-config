@@ -1,0 +1,1 @@
+clean worktrees=1 orphan=0

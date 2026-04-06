@@ -10,7 +10,7 @@
 bash tests/bootstrap-matrix/run.sh
 ```
 
-성공 시 `결과: PASS=11  FAIL=0`. 실패 시 diff 출력 후 비0 종료.
+성공 시 `결과: PASS=14  FAIL=0`. 실패 시 diff 출력 후 비0 종료.
 
 ## 분기 매핑
 
@@ -27,6 +27,9 @@ bash tests/bootstrap-matrix/run.sh
 | 9 | case9-claude-worktree-main | step5 | claude/* 워크트리가 main HEAD 와 동일 |
 | 10 | case10-orphan-worktree-dir | step6 | `.claude/worktrees/` 디렉터리만 잔재 |
 | 11 | case11-multi-blocker | step7 | 다중 블로커 (🔴 3건) |
+| 12 | case12-branch-match | step4 (positive) | HANDOFF 브랜치와 실제 브랜치 일치 |
+| 13 | case13-claude-worktree-ahead | step5 (positive) | claude/* 워크트리가 main 보다 앞섬 (정상 작업 중) |
+| 14 | case14-clean-no-worktree | step5/6/8 (positive) | clean working tree + claude 워크트리 없음 + orphan 없음 |
 
 ## 케이스 추가 방법
 
