@@ -417,12 +417,19 @@ Planner의 아키텍처와 작업 분해를 검토하고:
 ## Phase 3: 개발 실행
 
 1. 계획서에서 우선순위/의존성 순서로 태스크 정렬
-2. 도메인별로 `/develop {METHODOLOGY_FLAGS} {태스크}` 실행:
+2. 도메인별로 feature 브랜치 생성 및 체크아웃:
+   ```bash
+   git checkout -b feature/{도메인}/{기능} develop
+   ```
+3. 도메인별로 `/develop {METHODOLOGY_FLAGS} {태스크}` 실행:
    - 방법론 플래그는 `/start` 인자 그대로 전달
-   - `/develop`이 계획서를 참조하여 이슈 번호와 연결
-   - 도메인별 feature 브랜치: `feature/{도메인}/{기능}`
-3. 각 도메인 완료 후 다음 도메인으로 이동
-4. 모든 도메인 완료 후 Phase 4로
+   - `/develop`은 `docs/plans/{프로젝트명}-plan.md` 계획서를 자동 참조
+   - `/develop`의 Phase 1(계획)을 건너뛰고 Phase 2(문서화)부터 시작
+   - 이슈 번호를 커밋에 자동 연결 (`Refs #{이슈번호}`)
+4. 각 도메인 완료 후:
+   - 이슈 상태를 "리뷰중"으로 변경
+   - 다음 도메인의 feature 브랜치로 이동
+5. 모든 도메인 완료 후 Phase 4로
 
 ## Phase 4: 최종 보고
 
