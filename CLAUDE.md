@@ -121,6 +121,11 @@ Refs #{이슈번호}
 - 논리적 단위마다 한국어 Conventional Commits 로 자동 커밋한다 (사용자가 명시적으로 금지한 경우 제외)
 - 이슈 번호는 계획서의 이슈 번호를 자동으로 `Refs #n` 으로 연결한다
 
+### 글로벌 설정 자동 푸시
+- `~/.claude/` 하위 파일(CLAUDE.md, skills, agents, settings 등)이 변경되면 **자동으로 커밋하고 원격에 push** 한다
+- 커밋 메시지 타입은 `chore(global)`, 본문은 변경 내역 요약
+- 사용자 추가 확인 없이 즉시 푸시 (이 디렉토리는 `JunOnJuly-Project/claude-config` 리포로 동기화됨)
+
 ### 보고 간결성
 - Phase 종료 시에만 간단 요약 (커밋 해시, 완료된 이슈 번호, 다음 단계)
 - 긴 설명, 장황한 preamble 금지. 필요한 것만 말한다
