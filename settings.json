@@ -24,6 +24,7 @@
   "permissions": {
     "defaultMode": "bypassPermissions",
     "allow": [
+      "Bash(*)",
       "Read",
       "Glob",
       "Grep",
