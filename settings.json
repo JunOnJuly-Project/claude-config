@@ -3,7 +3,6 @@
     "CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS": "1"
   },
   "permissions": {
-    "defaultMode": "bypassPermissions",
     "allow": [
       "Bash(*)",
       "Read",
@@ -83,7 +82,6 @@
       "Bash(mkfs *)",
       "Bash(mkfs.*)",
       "Bash(dd if=*)",
-      "Bash(:(){ *)",
       "Bash(chmod -R 777 /*)",
       "Bash(chown -R *)",
       "Bash(curl * | sh)",
@@ -121,7 +119,10 @@
       "Edit(**/.env)",
       "Edit(**/.env.*)",
       "Edit(**/.ssh/**)"
-    ]
+    ],
+    "defaultMode": "auto"
   },
-  "theme": "dark"
+  "autoUpdatesChannel": "latest",
+  "theme": "dark",
+  "skipAutoPermissionPrompt": true
 }
