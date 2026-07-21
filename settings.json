@@ -113,9 +113,6 @@
       "Read(**/.aws/credentials)",
       "Read(**/.netrc)",
       "Read(**/.pypirc)",
-      "Write(**/.env)",
-      "Write(**/.env.*)",
-      "Write(**/.ssh/**)",
       "Edit(**/.env)",
       "Edit(**/.env.*)",
       "Edit(**/.ssh/**)"
